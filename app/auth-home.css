@@ -1,0 +1,190 @@
+.welcome-home {
+  min-height: 100vh;
+  overflow: hidden;
+  color: #f4efe8;
+  background:
+    radial-gradient(circle at 78% 20%, #ff4a1c24 0, transparent 29%),
+    linear-gradient(135deg, #090b0c 0%, #111516 52%, #080a0b 100%);
+}
+.welcome-home::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .16;
+  background-image: linear-gradient(#ffffff08 1px, transparent 1px), linear-gradient(90deg, #ffffff08 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+.welcome-nav {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px;
+  margin: auto;
+  padding: 25px 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2e30;
+}
+.welcome-nav .brand-logo img,.welcome-footer .brand-logo img{width:50px;height:50px}.welcome-nav .brand-logo strong,.welcome-footer .brand-logo strong{font-size:19px}.auth-loading .brand-logo img{width:82px;height:82px;border-radius:20px}.auth-loading .brand-logo strong{font-size:25px}
+.welcome-nav-actions { display: flex; align-items: center; gap: 24px; }
+.welcome-nav-actions > a { color: #989d9f; text-decoration: none; font-size: 9px; font-weight: 800; letter-spacing: 1.2px; }
+.welcome-nav-actions > a:hover { color: white; }
+.welcome-nav-actions > button,
+.welcome-nav-actions > .welcome-login-small {
+  width: auto;
+  border: 1px solid #ff4a1c;
+  border-radius: 7px;
+  padding: 11px 16px;
+  background: #ff4a1c14;
+  color: #ff6a42;
+  font-size: 9px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.welcome-nav-actions > .nav-install { border-color: #3b4446; background: #111617; color: #d7d4cf; }
+.welcome-hero {
+  position: relative;
+  z-index: 1;
+  max-width: 1320px;
+  min-height: 650px;
+  margin: auto;
+  padding: 70px 34px 54px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(430px, .95fr);
+  align-items: center;
+  gap: 70px;
+}
+.welcome-eyebrow { color: #ff5b31; font-size: 10px; font-weight: 900; letter-spacing: 2px; }
+.welcome-copy h1 { margin: 22px 0; font: clamp(47px, 5.3vw, 79px)/.97 Impact, "Arial Narrow", sans-serif; letter-spacing: 1px; }
+.welcome-copy h1 em { color: transparent; -webkit-text-stroke: 1px #ff5c32; font-style: normal; }
+.welcome-copy > p { max-width: 650px; color: #969c9e; font-size: 15px; line-height: 1.7; }
+.welcome-auth { display: grid; justify-items: start; gap: 9px; margin: 30px 0; }
+.welcome-auth a,
+.welcome-auth button,
+.welcome-session button {
+  border: 1px solid #ff714a;
+  border-radius: 9px;
+  padding: 17px 22px;
+  background: linear-gradient(100deg, #ef3808, #ff2513);
+  color: white;
+  text-decoration: none;
+  font: 18px Impact, "Arial Narrow", sans-serif;
+  letter-spacing: 1px;
+  box-shadow: 0 12px 38px #ff3b161f;
+  cursor: pointer;
+}
+.welcome-auth a b,
+.welcome-session button b { margin-left: 18px; }
+.welcome-auth small { color: #697073; font-size: 9px; }
+.hero-install { margin: -14px 0 27px; display: flex; align-items: center; gap: 11px; border: 0; background: none; color: #ff6840; padding: 0; font-size: 9px; font-weight: 900; letter-spacing: .7px; cursor: pointer; }
+.hero-install span { padding-left: 11px; border-left: 1px solid #3b4143; color: #71787a; font-size: 8px; font-weight: 400; }
+.welcome-session { max-width: 620px; margin: 28px 0; padding: 13px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border: 1px solid #343a3c; border-radius: 12px; background: #0b0e0fbb; }
+.welcome-session div small,
+.welcome-session div strong,
+.welcome-session div span { display: block; }
+.welcome-session div small { color: #777e80; font-size: 8px; letter-spacing: 1px; }
+.welcome-session div strong { margin-top: 4px; }
+.welcome-session div span { margin-top: 2px; color: #72797b; font-size: 9px; }
+.welcome-session button { flex: none; font-size: 13px; padding: 14px 17px; }
+.welcome-proof { display: flex; flex-wrap: wrap; gap: 12px 24px; color: #6f7678; font-size: 8px; letter-spacing: 1px; }
+.welcome-proof strong { color: #dad7d2; }
+.welcome-visual { position: relative; min-height: 500px; display: grid; place-items: center; }
+.visual-orbit {
+  position: relative;
+  z-index: 2;
+  width: 335px;
+  aspect-ratio: 1;
+  border: 22px solid #252b2d;
+  border-top-color: #ff4a1c;
+  border-right-color: #b73317;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, #23292b 0 48%, #111516 49%);
+  box-shadow: 0 0 0 1px #555b5d, 0 0 90px #ff4a1c22;
+}
+.visual-orbit::after { content: ""; position: absolute; inset: -43px; border: 1px solid #343a3c; border-radius: 50%; }
+.visual-orbit span { color: #ff5c32; font-size: 10px; font-weight: 900; letter-spacing: 2px; }
+.visual-orbit strong { margin: 4px 0; font: 91px/.95 Impact, "Arial Narrow", sans-serif; }
+.visual-orbit b { color: #efad41; font-size: 9px; letter-spacing: 1.5px; }
+.visual-orbit i { margin-top: 12px; color: #f5c34b; font-size: 8px; font-style: normal; }
+.visual-stat,
+.visual-chart { position: absolute; z-index: 3; border: 1px solid #343a3c; border-radius: 10px; padding: 14px 16px; background: #0b0f10ec; box-shadow: 0 15px 45px #0008; }
+.visual-stat small,
+.visual-stat strong,
+.visual-stat span { display: block; }
+.visual-stat small,
+.visual-chart small { color: #777e80; font-size: 7px; letter-spacing: 1px; }
+.visual-stat strong { margin: 5px 0; color: #ff5b32; font: 27px Impact, "Arial Narrow", sans-serif; }
+.visual-stat strong b { color: #ff5b32; font: 9px Arial; }
+.visual-stat span { color: #53d47f; font-size: 7px; }
+.stat-one { top: 48px; right: 0; }
+.stat-two { left: 0; bottom: 42px; }
+.visual-chart { right: -12px; bottom: 10px; width: 235px; }
+.mini-bars { height: 55px; margin-top: 8px; display: flex; align-items: end; gap: 8px; border-bottom: 1px solid #343a3c; }
+.mini-bars i { flex: 1; background: linear-gradient(#ff5b32, #ff4a1c22); }
+.mini-bars i:nth-child(1) { height: 94%; }.mini-bars i:nth-child(2) { height: 87%; }.mini-bars i:nth-child(3) { height: 80%; }.mini-bars i:nth-child(4) { height: 76%; }.mini-bars i:nth-child(5) { height: 69%; }
+.visual-chart > span { display: block; margin-top: 5px; color: #62696b; font-size: 7px; }
+.welcome-features { position: relative; z-index: 1; max-width: 1250px; margin: 0 auto 70px; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #292f31; border-radius: 14px; overflow: hidden; background: #0d1112c7; }
+.welcome-features article { padding: 27px; border-right: 1px solid #292f31; }
+.welcome-features article:last-child { border: 0; }
+.welcome-features article > b { color: #ff5b32; font-size: 10px; }
+.welcome-features h2 { margin: 12px 0 8px; font-size: 16px; }
+.welcome-features p { margin: 0; color: #777e80; font-size: 11px; line-height: 1.6; }
+.welcome-steps { position: relative; z-index: 1; max-width: 1250px; margin: 0 auto 70px; padding: 24px; display: flex; align-items: center; justify-content: center; gap: 22px; border-top: 1px solid #2c3234; border-bottom: 1px solid #2c3234; color: #d7d4cf; font-size: 10px; letter-spacing: 1px; }
+.welcome-steps small { color: #ff5b32; }.welcome-steps i { color: #545b5d; }
+.welcome-footer { position: relative; z-index: 1; max-width: 1320px; margin: auto; padding: 25px 34px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #2a2e30; }
+.welcome-footer p { color: #6c7375; font-size: 8px; letter-spacing: 1px; }
+.install-guide { position: fixed; z-index: 100; left: 50%; top: 50%; width: min(680px, calc(100vw - 30px)); max-height: calc(100vh - 30px); overflow: auto; transform: translate(-50%, -50%); border: 1px solid #70402e; border-radius: 15px; padding: 28px; background: linear-gradient(145deg, #171c1d, #090c0d); box-shadow: 0 0 0 100vmax #000b, 0 25px 80px #000d; }
+.install-guide > span { color: #ff5b32; font-size: 9px; font-weight: 900; letter-spacing: 1.5px; }
+.install-guide h2 { margin: 8px 0 22px; font: 27px Impact, "Arial Narrow", sans-serif; letter-spacing: 1px; }
+.install-guide > div { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.install-guide article { border: 1px solid #303638; border-radius: 10px; padding: 17px; background: #0c1011; }
+.install-guide article > b { color: #ff6840; font-size: 10px; }
+.install-guide ol { margin: 14px 0 0; padding-left: 20px; color: #9aa0a2; font-size: 11px; line-height: 1.8; }
+.install-guide li strong { color: white; }
+.install-guide > small { display: block; margin-top: 17px; color: #747b7d; font-size: 9px; }
+.install-close { position: absolute; right: 16px; top: 14px; border: 0; background: none; color: #858c8e; font-size: 25px; cursor: pointer; }
+.auth-loading { min-height: 100vh; display: grid; place-content: center; justify-items: center; gap: 22px; background: #090b0c; }
+.auth-loader { width: 54px; height: 54px; border: 3px solid #343a3c; border-top-color: #ff4a1c; border-radius: 50%; animation: auth-spin .8s linear infinite; }
+.auth-loading p { color: #737a7c; font-size: 9px; letter-spacing: 1.5px; }
+@keyframes auth-spin { to { transform: rotate(360deg); } }
+.header-account { display: flex; align-items: center; gap: 10px; }
+.logout-link { border: 1px solid #3b4143; border-radius: 7px; padding: 10px; color: #7d8486; text-decoration: none; font-size: 8px; font-weight: 900; }
+.logout-link:hover { border-color: #ff4a1c; color: #ff6540; }
+@media (max-width: 900px) {
+  .welcome-hero { grid-template-columns: 1fr; padding-top: 55px; }
+  .welcome-visual { min-height: 480px; }
+  .welcome-features { margin-inline: 24px; }
+  .welcome-steps { margin-inline: 24px; flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  .welcome-nav { padding: 18px 16px; }
+  .welcome-nav .brand-logo img { width: 42px; height: 42px; }
+  .welcome-nav .brand-logo>div { display: none; }
+  .welcome-nav-actions { gap: 10px; }
+  .welcome-nav-actions > .nav-install { padding: 9px 10px; }
+  .welcome-nav-actions > a:not(.welcome-login-small) { display: none; }
+  .welcome-hero { min-height: auto; padding: 52px 18px 36px; gap: 22px; }
+  .welcome-copy h1 { font-size: clamp(42px, 13vw, 61px); }
+  .welcome-copy > p { font-size: 13px; }
+  .welcome-session { align-items: stretch; flex-direction: column; }
+  .welcome-session button { width: 100%; }
+  .welcome-visual { min-height: 400px; transform: scale(.86); margin: -12px -22px; }
+  .visual-orbit { width: 290px; }
+  .visual-orbit strong { font-size: 76px; }
+  .stat-one { right: 2px; }.stat-two { left: 0; bottom: 28px; }.visual-chart { right: 0; bottom: -24px; width: 200px; }
+  .welcome-features { grid-template-columns: 1fr; margin: 18px; }
+  .welcome-features article { border-right: 0; border-bottom: 1px solid #292f31; }
+  .welcome-steps { margin: 45px 18px; gap: 10px 14px; }
+  .welcome-steps small { width: 100%; text-align: center; }
+  .welcome-footer { padding: 20px 18px; }
+  .welcome-footer p { text-align: right; }
+  .logout-link { display: none; }
+  .header-account { min-width: 0; }
+  .install-guide { padding: 23px 17px; }
+  .install-guide > div { grid-template-columns: 1fr; }
+}
