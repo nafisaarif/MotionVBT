@@ -13,6 +13,9 @@ type Rep = {
   startTime?: number;
   peakTime?: number;
   endTime?: number;
+  timeToTakeoff?: number;
+  rsiMod?: number;
+  rsiCondition?: string;
 };
 type Point = { t: number; y: number };
 type Template = { data: Float32Array; size: number };
@@ -28,7 +31,7 @@ type InstallPromptEvent = Event & {
 type InstallState = "checking" | "available" | "installed" | "manual";
 type AnalysisMode = "video" | "sensor" | "sprint";
 type SensorAxis = "auto" | "x" | "y" | "z";
-type SensorTestMode = "vbt" | "verticalJump";
+type SensorTestMode = "vbt" | "verticalJump" | "cmj";
 type HistorySet = {
   id: string;
   date: string;
@@ -709,9 +712,11 @@ function SensorAlertSettings() {
 function VerticalJumpSensorAnalysis({
   athleteName,
   onSave,
+  mode,
 }: {
   athleteName: string;
   onSave: (reps: Rep[], exerciseOverride?: string, loadOverride?: number) => void;
+  mode: "verticalJump" | "cmj";
 }) {
   const [sensorState, setSensorState] = useState<"idle" | "calibrating" | "ready" | "running" | "error">("idle");
   const [message, setMessage] = useState("Pasang HP erat di pinggang, lalu aktifkan dan kalibrasi sensor.");
@@ -842,6 +847,9 @@ function VerticalJumpSensorAnalysis({
           if (flightTime >= 0.12 && flightTime <= 1.2) {
             const height = (9.80665 * flightTime * flightTime) / 8;
             const takeoffVelocity = (9.80665 * flightTime) / 2;
+            const timeToTakeoff = r.flightStartedAt - r.movementStartedAt;
+            const rsiMod = timeToTakeoff > 0 ? height / timeToTakeoff : 0;
+            const rsiCondition = rsiMod >= 0.7 ? "SANGAT BAIK" : rsiMod >= 0.5 ? "BAIK" : rsiMod >= 0.3 ? "PERLU DITINGKATKAN" : "RENDAH";
             const jump: Rep = {
               mean: takeoffVelocity,
               peak: Math.max(takeoffVelocity, r.peakLandingG),
@@ -852,9 +860,12 @@ function VerticalJumpSensorAnalysis({
               startTime: r.movementStartedAt - r.startedAt,
               peakTime: r.flightStartedAt - r.startedAt,
               endTime: landingAt - r.startedAt,
+              timeToTakeoff,
+              rsiMod,
+              rsiCondition,
             };
             setJumps((current) => [...current, jump]);
-            setMessage(`Lompatan tersimpan • ${(height * 100).toFixed(1)} cm • flight time ${(flightTime * 1000).toFixed(0)} ms`);
+            setMessage(mode === "cmj" ? `CMJ tersimpan • ${(height * 100).toFixed(1)} cm • RSImod ${rsiMod.toFixed(2)} m/s` : `Lompatan tersimpan • ${(height * 100).toFixed(1)} cm • flight time ${(flightTime * 1000).toFixed(0)} ms`);
           } else {
             setMessage("Flight time di luar rentang valid • lompatan ditolak");
           }
@@ -880,7 +891,7 @@ function VerticalJumpSensorAnalysis({
     };
     window.addEventListener("devicemotion", handleMotion);
     return () => window.removeEventListener("devicemotion", handleMotion);
-  }, []);
+  }, [mode]);
 
   async function activateSensor() {
     try {
@@ -919,22 +930,24 @@ function VerticalJumpSensorAnalysis({
     setSensorState("ready");
     setPhase("SELESAI");
     if (jumpsRef.current.length) {
-      onSave(jumpsRef.current, "Vertical Jump", 0);
+      onSave(jumpsRef.current, mode === "cmj" ? "CMJ + RSImod" : "Vertical Jump", 0);
       setMessage(`${jumpsRef.current.length} lompatan disimpan ke riwayat ${athleteName}`);
     } else setMessage("Pengukuran dihentikan • belum ada lompatan valid");
   }
   const lastJump = jumps[jumps.length - 1];
   const best = jumps.length ? Math.max(...jumps.map((jump) => jump.rom)) : 0;
   const average = jumps.length ? jumps.reduce((sum, jump) => sum + jump.rom, 0) / jumps.length : 0;
+  const lastRsi = lastJump?.rsiMod ?? 0;
+  const bestRsi = jumps.length ? Math.max(...jumps.map((jump) => jump.rsiMod ?? 0)) : 0;
   return (
     <section className="sensor-workspace vertical-jump-workspace">
       <div className="sensor-intro">
-        <div><small>HP SEBAGAI VERTICAL JUMP SENSOR</small><h2>VERTICAL JUMP ANALYZER</h2><p>Pasang HP erat di pinggang dengan sabuk/holder. Sistem membaca urutan countermovement, tolakan, fase melayang, pendaratan, dan posisi stabil.</p></div>
+        <div><small>HP SEBAGAI SENSOR LOMPATAN</small><h2>{mode === "cmj" ? "CMJ + RSImod ANALYZER" : "VERTICAL JUMP ANALYZER"}</h2><p>Pasang HP erat di pinggang dengan sabuk/holder. Sistem membaca urutan countermovement, tolakan, fase melayang, pendaratan, dan posisi stabil.</p></div>
         <span className={`sensor-state state-${sensorState}`}>● {sensorState === "running" ? "MENGUKUR" : sensorState === "ready" ? "SIAP" : sensorState === "calibrating" ? "KALIBRASI" : sensorState === "error" ? "PERIKSA SENSOR" : "BELUM AKTIF"}</span>
       </div>
       <div className="sensor-controls vj-controls">
         <article><small>ATLET</small><strong>{athleteName}</strong></article>
-        <article><small>METODE</small><strong>Flight Time</strong></article>
+        <article><small>METODE</small><strong>{mode === "cmj" ? "CMJ Sensor" : "Flight Time"}</strong></article>
         <article><small>SAMPLE RATE</small><strong>{sensorRate || "—"} {sensorRate ? "Hz" : ""}</strong></article>
         {sensorState === "idle" || sensorState === "error" ? <button type="button" onClick={() => void activateSensor()}>◎ AKTIFKAN & KALIBRASI</button> : sensorState === "ready" ? <button type="button" onClick={startMeasurement}>▶ MULAI PENGUKURAN</button> : sensorState === "running" ? <button type="button" className="sensor-stop" onClick={stopMeasurement}>■ SELESAI & SIMPAN</button> : <button type="button" disabled>○ JANGAN BERGERAK</button>}
       </div>
@@ -947,8 +960,11 @@ function VerticalJumpSensorAnalysis({
         <article><small>JUMLAH LOMPATAN</small><strong>{jumps.length}</strong><b>jump</b></article>
         <article><small>TERBAIK</small><strong>{(best * 100).toFixed(1)}</strong><b>cm</b></article>
         <article><small>RATA-RATA</small><strong>{(average * 100).toFixed(1)}</strong><b>cm</b></article>
+        {mode === "cmj" && <article className={`rsi-condition rsi-${lastJump?.rsiCondition?.toLowerCase().replaceAll(" ", "-") ?? "waiting"}`}><small>RSImod TERAKHIR</small><strong>{lastJump ? lastRsi.toFixed(2).replace(".", ",") : "0,00"}</strong><b>m/s</b><span>{lastJump?.rsiCondition ?? "MENUNGGU CMJ"}</span></article>}
+        {mode === "cmj" && <article><small>TIME TO TAKE-OFF</small><strong>{lastJump?.timeToTakeoff ? Math.round(lastJump.timeToTakeoff * 1000) : "0"}</strong><b>ms</b><span>Terbaik RSImod {bestRsi.toFixed(2)}</span></article>}
       </div>
-      {jumps.length > 0 && <div className="sensor-reps">{jumps.map((jump, index) => <article key={index}><small>JUMP {index + 1}</small><strong>{(jump.rom * 100).toFixed(1)}</strong><b>cm</b><span>{Math.round(jump.duration * 1000)} ms</span><p>Take-off velocity {jump.mean.toFixed(2)} m/s</p></article>)}</div>}
+      {jumps.length > 0 && <div className="sensor-reps">{jumps.map((jump, index) => <article key={index}><small>{mode === "cmj" ? "CMJ" : "JUMP"} {index + 1}</small><strong>{(jump.rom * 100).toFixed(1)}</strong><b>cm</b><span>{Math.round(jump.duration * 1000)} ms</span><p>{mode === "cmj" ? `RSImod ${(jump.rsiMod ?? 0).toFixed(2)} m/s • ${jump.rsiCondition}` : `Take-off velocity ${jump.mean.toFixed(2)} m/s`}</p></article>)}</div>}
+      {mode === "cmj" && <div className="rsi-guide"><strong>KONDISI RSImod</strong><span>Rendah &lt;0,30 • Perlu ditingkatkan 0,30–0,49 • Baik 0,50–0,69 • Sangat baik ≥0,70 m/s</span><small>Gunakan sebagai zona pemantauan internal. Bandingkan atlet dengan protokol, posisi HP, dan kondisi tes yang sama.</small></div>}
       <div className="sensor-safety"><strong>PENEMPATAN WAJIB</strong><span>HP harus terpasang kaku di pinggang, bukan digenggam. Gunakan matras dan area aman. Kalibrasi ulang jika posisi atau orientasi HP berubah.</span></div>
     </section>
   );
@@ -975,11 +991,12 @@ function PhoneSensorWorkspace(props: {
       <div className="sensor-test-switch" role="group" aria-label="Pilih jenis pengukuran sensor HP">
         <button type="button" className={testMode === "vbt" ? "active" : ""} onClick={() => setTestMode("vbt")}>⌁ VELOCITY / VBT</button>
         <button type="button" className={testMode === "verticalJump" ? "active" : ""} onClick={() => setTestMode("verticalJump")}>↥ VERTICAL JUMP</button>
-        <span>{testMode === "vbt" ? "HP dipasang pada beban atau tubuh untuk membaca velocity" : "HP dipasang di pinggang untuk mengukur tinggi lompatan"}</span>
+        <button type="button" className={testMode === "cmj" ? "active" : ""} onClick={() => setTestMode("cmj")}>↥ CMJ + RSImod</button>
+        <span>{testMode === "vbt" ? "HP dipasang pada beban atau tubuh untuk membaca velocity" : testMode === "cmj" ? "HP di pinggang mengukur tinggi, time to take-off, RSImod, dan kondisi" : "HP dipasang di pinggang untuk mengukur tinggi lompatan"}</span>
       </div>
       {testMode === "vbt"
         ? <PhoneSensorAnalysis {...props} />
-        : <VerticalJumpSensorAnalysis athleteName={props.athleteName} onSave={props.onSave} />}
+        : <VerticalJumpSensorAnalysis athleteName={props.athleteName} onSave={props.onSave} mode={testMode} />}
     </>
   );
 }
